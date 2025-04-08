@@ -1,4 +1,5 @@
 require 'minitest/autorun'
+require 'minitest/pride'
 require_relative 'log_line_parser'
 
 class LogLineParserTest < Minitest::Test
