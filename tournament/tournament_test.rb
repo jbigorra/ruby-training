@@ -1,4 +1,5 @@
 require 'minitest/autorun'
+require 'minitest/pride'
 require_relative 'tournament'
 
 class TournamentTest < Minitest::Test
@@ -16,7 +17,7 @@ class TournamentTest < Minitest::Test
   end
 
   def test_a_win_is_three_points_a_loss_is_zero_points
-    skip
+    # skip
     input = <<~INPUT
       Allegoric Alaskans;Blithering Badgers;win
     INPUT
