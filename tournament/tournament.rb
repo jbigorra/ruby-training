@@ -18,25 +18,30 @@ module Tournament
       Team                           | MP |  W |  D |  L |  P
     TALLY
 
+    matches_results = []
+
     matches.each do |match|
 
       team_one = match[0]
       team_two = match[1]
       result = match[2]
       
-      r = self.allocate_match_results(local: team_one, visitor: team_two, match_result: result)
+      self.allocate_match_results(local: team_one, visitor: team_two, match_result: result, matches_results:)
+    end
 
-      tally << <<~TALLY
-        #{self.adjust_line_format(r[0][0])}|  #{r[0][1]} |  #{r[0][2]} |  #{r[0][3]} |  #{r[0][4]} |  #{r[0][5]}
-        #{self.adjust_line_format(r[1][0])}|  #{r[1][1]} |  #{r[1][2]} |  #{r[1][3]} |  #{r[1][4]} |  #{r[1][5]}
+    # Sort by points (index 5) in descending order, then by team name (index 0) in ascending order
+    matches_results.sort_by! { |result| [-result[5], result[0]] }
+
+    matches_results.each do |m|
+      tally += <<~TALLY
+        #{self.adjust_team_lead_spaces(m[0])}|#{self.adjust_score_spaces(m[1])}|#{self.adjust_score_spaces(m[2])}|#{self.adjust_score_spaces(m[3])}|#{self.adjust_score_spaces(m[4])}|#{self.adjust_score_spaces(m[5],0)}
       TALLY
-
     end
 
     tally
   end
 
-  def allocate_match_results(local:, visitor:, match_result:)
+  def allocate_match_results(local:, visitor:, match_result:, matches_results:)
     local_win = 0
     local_draw = 0
     local_loss = 0
@@ -74,19 +79,44 @@ module Tournament
       visitor_loss += 0
       visitor_points += 3
     end
-    
-    results = [
-      [local, 1, local_win, local_draw, local_loss, local_points], 
-      [visitor, 1, visitor_win, visitor_draw, visitor_loss, visitor_points]
-    ]
 
-    results
+    local_index = matches_results.index { |result| result[0] == local }
+    visitor_index = matches_results.index { |result| result[0] == visitor }
+
+    unless local_index.nil?
+      mr = matches_results[local_index]
+      mr[1] += 1 
+      mr[2] += local_win 
+      mr[3] += local_draw 
+      mr[4] += local_loss 
+      mr[5] += local_points 
+    else
+      matches_results << [local, 1, local_win, local_draw, local_loss, local_points]
+    end
+
+    unless visitor_index.nil?
+      mr = matches_results[visitor_index]
+      mr[1] += 1 
+      mr[2] += visitor_win 
+      mr[3] += visitor_draw 
+      mr[4] += visitor_loss 
+      mr[5] += visitor_points 
+    else
+      matches_results << [visitor, 1, visitor_win, visitor_draw, visitor_loss, visitor_points]
+    end
   end
 
-  def adjust_line_format(str)
+  def adjust_team_lead_spaces(str)
     max_spaces = 31
     spaces_to_add = max_spaces - str.length
     
-    str << " " * spaces_to_add
+    str + " " * spaces_to_add
+  end
+
+  def adjust_score_spaces(number, right_side_count = 1)
+    max_spaces = 4
+    diff = max_spaces - number.to_s.length
+
+    "" + (" " * (diff - 1)) + number.to_s + (" " * right_side_count)
   end
 end
