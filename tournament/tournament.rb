@@ -1,17 +1,6 @@
-=begin
-Write your code for the 'Tournament' exercise in this file. Make the tests in
-`tournament_test.rb` pass.
-
-To get started with TDD, see the `README.md` file in your
-`ruby/tournament` directory.
-=end
-
-module Tournament
-
-  module_function
-  
-  def tally(input)
-    matches = input.split("\n")
+class Tournament
+  def self.tally(games)
+    matches = games.split("\n")
       .map {|m| m.split(";")}
       .each_with_object({}) do | match, results |
         local, visitor, match_result = match
@@ -44,7 +33,9 @@ module Tournament
     generate_tally(sorted_matches)
   end
 
-  def generate_tally(matches)
+  private
+
+  def self.generate_tally(matches)
     tally = "Team                           | MP |  W |  D |  L |  P\n"
     
     matches.each do |team, scores|
@@ -54,7 +45,7 @@ module Tournament
     tally
   end
 
-  def format_line(team, scores)
+  def self.format_line(team, scores)
     mp = scores[:MP].to_s.rjust(2)
     w = scores[:W].to_s.rjust(2)
     d = scores[:D].to_s.rjust(2)
