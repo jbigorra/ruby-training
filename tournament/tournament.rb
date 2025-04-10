@@ -11,105 +11,56 @@ module Tournament
   module_function
   
   def tally(input)
-    matches = input.split("\n").map {|m| m.split(";")}
+    matches = input.split("\n")
+      .map {|m| m.split(";")}
+      .each_with_object({}) do | match, results |
+        local, visitor, match_result = match
+
+        results[local] ||= { MP: 0, W: 0, D: 0, L: 0, P: 0}
+        results[visitor] ||= { MP: 0, W: 0, D: 0, L: 0, P: 0}
+
+        results[local][:MP] += 1
+        results[visitor][:MP] += 1
+
+        case match_result
+        when "win"
+          results[local][:P] += 3
+          results[local][:W] += 1
+          results[visitor][:L] += 1
+        when "loss"
+          results[visitor][:P] += 3
+          results[visitor][:W] += 1
+          results[local][:L] += 1
+        when "draw"
+          results[local][:D] += 1
+          results[local][:P] += 1
+          results[visitor][:D] += 1
+          results[visitor][:P] += 1
+        end
+      end
+
+    sorted_matches = matches.sort_by { |team, scores| [-scores[:P], team] }.to_h
     
-    # 31 spaces before table starts
-    tally = <<~TALLY
-      Team                           | MP |  W |  D |  L |  P
-    TALLY
+    generate_tally(sorted_matches)
+  end
 
-    matches_results = []
-
-    matches.each do |match|
-
-      team_one = match[0]
-      team_two = match[1]
-      result = match[2]
-      
-      self.allocate_match_results(local: team_one, visitor: team_two, match_result: result, matches_results:)
-    end
-
-    # Sort by points (index 5) in descending order, then by team name (index 0) in ascending order
-    matches_results.sort_by! { |result| [-result[5], result[0]] }
-
-    matches_results.each do |m|
-      tally += <<~TALLY
-        #{self.adjust_team_lead_spaces(m[0])}|#{self.adjust_score_spaces(m[1])}|#{self.adjust_score_spaces(m[2])}|#{self.adjust_score_spaces(m[3])}|#{self.adjust_score_spaces(m[4])}|#{self.adjust_score_spaces(m[5],0)}
-      TALLY
+  def generate_tally(matches)
+    tally = "Team                           | MP |  W |  D |  L |  P\n"
+    
+    matches.each do |team, scores|
+      tally += format_line(team, scores)
     end
 
     tally
   end
 
-  def allocate_match_results(local:, visitor:, match_result:, matches_results:)
-    # results default to a draw
-    local_win = 0
-    local_draw = 1
-    local_loss = 0
-    local_points = 1
-    visitor_win = 0
-    visitor_draw = 1
-    visitor_loss = 0
-    visitor_points = 1
+  def format_line(team, scores)
+    mp = scores[:MP].to_s.rjust(2)
+    w = scores[:W].to_s.rjust(2)
+    d = scores[:D].to_s.rjust(2)
+    l = scores[:L].to_s.rjust(2)
+    p = scores[:P].to_s.rjust(2)
     
-    if match_result == 'win'
-      local_win = 1
-      local_draw = 0
-      local_loss = 0
-      local_points = 3
-      visitor_win = 0
-      visitor_draw = 0
-      visitor_loss = 1
-      visitor_points = 0
-    elsif match_result == 'loss'
-      local_win = 0
-      local_draw = 0
-      local_loss = 1
-      local_points = 0
-      visitor_win = 1
-      visitor_draw = 0
-      visitor_loss = 0
-      visitor_points = 3
-    end
-
-    local_index = matches_results.index { |result| result[0] == local }
-    visitor_index = matches_results.index { |result| result[0] == visitor }
-
-    unless local_index.nil?
-      mr = matches_results[local_index]
-      mr[1] += 1 
-      mr[2] += local_win 
-      mr[3] += local_draw 
-      mr[4] += local_loss 
-      mr[5] += local_points 
-    else
-      matches_results << [local, 1, local_win, local_draw, local_loss, local_points]
-    end
-
-    unless visitor_index.nil?
-      mr = matches_results[visitor_index]
-      mr[1] += 1 
-      mr[2] += visitor_win 
-      mr[3] += visitor_draw 
-      mr[4] += visitor_loss 
-      mr[5] += visitor_points 
-    else
-      matches_results << [visitor, 1, visitor_win, visitor_draw, visitor_loss, visitor_points]
-    end
-  end
-
-  def adjust_team_lead_spaces(str)
-    max_spaces = 31
-    spaces_to_add = max_spaces - str.length
-    
-    str + " " * spaces_to_add
-  end
-
-  def adjust_score_spaces(number, right_side_count = 1)
-    max_spaces = 4
-    length = number.to_s.length
-    diff = max_spaces - length
-
-    number.to_s.rjust(diff + (length - 1)).ljust(diff + (length - 1) + right_side_count)
+    "#{team.ljust(30)} | #{mp} | #{w} | #{d} | #{l} | #{p}\n"
   end
 end
