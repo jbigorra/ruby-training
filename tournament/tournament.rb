@@ -42,42 +42,34 @@ module Tournament
   end
 
   def allocate_match_results(local:, visitor:, match_result:, matches_results:)
+    # results default to a draw
     local_win = 0
-    local_draw = 0
+    local_draw = 1
     local_loss = 0
-    local_points = 0
+    local_points = 1
     visitor_win = 0
-    visitor_draw = 0
+    visitor_draw = 1
     visitor_loss = 0
-    visitor_points = 0
+    visitor_points = 1
     
-    if match_result == 'draw'
-      local_win += 0
-      local_draw += 1
-      local_loss += 0
-      local_points += 1
-      visitor_win += 0
-      visitor_draw += 1
-      visitor_loss += 0
-      visitor_points += 1
-    elsif match_result == 'win'
-      local_win += 1
-      local_draw += 0
-      local_loss += 0
-      local_points += 3
-      visitor_win += 0
-      visitor_draw += 0
-      visitor_loss += 1
-      visitor_points += 0
-    else
-      local_win += 0
-      local_draw += 0
-      local_loss += 1
-      local_points += 0
-      visitor_win += 1
-      visitor_draw += 0
-      visitor_loss += 0
-      visitor_points += 3
+    if match_result == 'win'
+      local_win = 1
+      local_draw = 0
+      local_loss = 0
+      local_points = 3
+      visitor_win = 0
+      visitor_draw = 0
+      visitor_loss = 1
+      visitor_points = 0
+    elsif match_result == 'loss'
+      local_win = 0
+      local_draw = 0
+      local_loss = 1
+      local_points = 0
+      visitor_win = 1
+      visitor_draw = 0
+      visitor_loss = 0
+      visitor_points = 3
     end
 
     local_index = matches_results.index { |result| result[0] == local }
@@ -115,8 +107,9 @@ module Tournament
 
   def adjust_score_spaces(number, right_side_count = 1)
     max_spaces = 4
-    diff = max_spaces - number.to_s.length
+    length = number.to_s.length
+    diff = max_spaces - length
 
-    "" + (" " * (diff - 1)) + number.to_s + (" " * right_side_count)
+    number.to_s.rjust(diff + (length - 1)).ljust(diff + (length - 1) + right_side_count)
   end
 end
