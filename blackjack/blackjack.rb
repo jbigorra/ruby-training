@@ -16,8 +16,7 @@ module Blackjack
   ]
   
   def self.parse_card(card)
-    return 0 unless CARD_VALUES.key?(card)
-    return CARD_VALUES[card]
+    CARD_VALUES[card] || 0
   end
 
   def self.card_range(card1, card2)
@@ -35,14 +34,10 @@ module Blackjack
     case
       when card_range(card1, card2).nil? then "P"
       when card_range(card1, card2) == "blackjack"
-        if ["ace", "ten", "jack", "queen", "king"].include?(dealer_card) then "S"
-        else "W"
-        end
+        [10, 11].include?(parse_card(dealer_card)) ? "S" : "W"
       when card_range(card1, card2) == "high" then "S"
       when card_range(card1, card2) == "mid"
-        if parse_card(dealer_card) >= 7 then "H"
-        else "S"
-        end
+        parse_card(dealer_card) >= 7 ? "H" : "S"
       when card_range(card1, card2) == "low" then "H"
     end
   end
