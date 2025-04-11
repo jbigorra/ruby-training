@@ -1,4 +1,5 @@
 require 'minitest/autorun'
+require 'minitest/pride'
 require_relative 'assembly_line'
 
 class AssemblyLineTest < Minitest::Test
