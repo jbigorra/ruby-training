@@ -1,4 +1,5 @@
 require 'minitest/autorun'
+require 'minitest/pride'
 require_relative 'savings_account'
 
 class SavingsAccountTest < Minitest::Test
