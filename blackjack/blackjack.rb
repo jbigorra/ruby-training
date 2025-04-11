@@ -1,21 +1,23 @@
 module Blackjack
+  CARD_VALUES = Hash[
+    'ace',    11,
+    'two',    2,
+    'three',  3,
+    'four',   4,
+    'five',   5,
+    'six',    6,
+    'seven',  7,
+    'eight',  8,
+    'nine',   9,
+    'ten',    10,
+    'jack',   10,
+    'queen',  10,
+    'king',   10,
+  ]
+  
   def self.parse_card(card)
-    case card
-      when 'ace' then	11	
-      when 'two' then	2	
-      when 'three' then	3	
-      when 'four' then 4	
-      when 'five' then 5	
-      when 'six' then	6	
-      when 'seven' then	7	
-      when 'eight' then	8
-      when 'nine' then 9
-      when 'ten' then	10
-      when 'jack' then 10
-      when 'queen' then 10
-      when 'king' then 10
-      else 0
-    end
+    return 0 unless CARD_VALUES.key?(card)
+    return CARD_VALUES[card]
   end
 
   def self.card_range(card1, card2)
