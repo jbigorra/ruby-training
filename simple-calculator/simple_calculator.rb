@@ -3,25 +3,12 @@ class SimpleCalculator
 
 
   def self.calculate(first_operand, second_operand, operation)
-    if not ALLOWED_OPERATIONS.include?(operation)
-      raise UnsupportedOperation.new("Invalid operation")
-    end
-
-    if not first_operand.is_a?(Numeric) or not second_operand.is_a?(Numeric)
-      raise ArgumentError.new
-    end
+    raise UnsupportedOperation.new("Invalid operation") unless ALLOWED_OPERATIONS.include?(operation)
+    raise ArgumentError.new unless first_operand.is_a?(Numeric) 
+    raise ArgumentError.new unless second_operand.is_a?(Numeric) 
 
     begin      
-      
-      result = nil
-      case operation
-      when "+"
-        result = first_operand + second_operand
-      when "*"
-        result = first_operand * second_operand
-      when "/"
-        result = first_operand / second_operand
-      end
+      result = first_operand.send(operation, second_operand)
 
       "#{first_operand.to_s} #{operation} #{second_operand.to_s} = #{result}"
     rescue ZeroDivisionError => _
