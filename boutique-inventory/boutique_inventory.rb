@@ -20,7 +20,7 @@ class BoutiqueInventory
   end
 
   def total_stock
-    @items.sum { |item| item[:quantity_by_size].sum { |_, v| v }}
+    @items.sum { |item| item[:quantity_by_size].values.sum }
   end
 
   private
