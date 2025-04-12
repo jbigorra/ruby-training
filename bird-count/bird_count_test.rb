@@ -1,4 +1,5 @@
 require 'minitest/autorun'
+require 'minitest/pride'
 require_relative 'bird_count'
 
 class BirdCountTest < Minitest::Test
