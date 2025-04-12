@@ -14,15 +14,14 @@ class HighScores
   def personal_best(scores = nil)
     scores_list = scores.nil? ? @game_score : scores
 
-    scores_list.inject(0) do | prev, score |
-      score > prev ? score : prev
-    end 
+    scores_list.inject(0) { | prev, score | score > prev ? score : prev }
   end
 
   def personal_top_three
-    sorted_scores = @game_score.sort { |a, b| b <=> a }
-    
-    sorted_scores.take(3).take_while { |score| not score.nil? }
+    @game_score
+      .sort { |a, b| b <=> a }
+      .take(3)
+      .take_while { |score| not score.nil? }
   end  
 
   def latest_is_personal_best?
