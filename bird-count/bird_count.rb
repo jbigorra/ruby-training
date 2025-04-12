@@ -16,11 +16,7 @@ class BirdCount
   end
 
   def busy_days
-    busy_days = @birds_per_day.select do |count|
-      count >= 5
-    end
-
-    busy_days.size
+    @birds_per_day.count { |count| count >= 5 }
   end
 
   def day_without_birds?
