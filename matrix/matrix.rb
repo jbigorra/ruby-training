@@ -4,7 +4,7 @@ class Matrix
   def initialize(matrix_as_string)
     @matrix = matrix_as_string
       .split("\n")
-      .map { |row| row.split(" ").map { |n| n.to_i } }
+      .map { |row| row.split(" ").map(&:to_i) }
   end
 
   def row(n) = matrix[n - 1]
