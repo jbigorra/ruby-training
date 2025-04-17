@@ -3,6 +3,7 @@ class Series
 
   def initialize(digits)
     raise ArgumentError.new if digits.empty?
+    
     @digits = digits.chars
   end
 
@@ -10,15 +11,6 @@ class Series
     raise ArgumentError.new if n > digits.size
     raise ArgumentError.new if n <= 0
 
-    result = []
-    iterations = digits.length
-    
-    iterations.times do |i|
-      result.push(digits[i...(i + n)].join)
-
-      break if (i + 1 - (iterations - n) > 0)
-    end
-    
-    result
+    digits.each_cons(n).map(&:join)
   end
 end
