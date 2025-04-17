@@ -6,10 +6,6 @@ class Phrase
   end
 
   def word_count
-    phrase.each_with_object({}) do |value, obj|
-      obj[value] ||= 0
-      obj[value] += 1
-      obj
-    end
+    phrase.tally
   end
 end
