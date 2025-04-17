@@ -5,9 +5,7 @@ module EliudsEggs
     laid_eggs = 0
     
     while quotient > 0
-      remainder = quotient % 2
-      quotient = (quotient / 2).floor
-      
+      quotient, remainder = quotient.divmod(2)
       laid_eggs += 1 if remainder == 1  
     end
     
